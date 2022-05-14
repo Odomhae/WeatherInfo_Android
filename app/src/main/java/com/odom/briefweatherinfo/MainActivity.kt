@@ -7,6 +7,7 @@ import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.odom.briefweatherinfo.adapter.WeatherRvAdapter
 import io.realm.Realm
@@ -18,6 +19,10 @@ import com.odom.briefweatherinfo.db.LocationRealmObject
 
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class MainActivity : AppCompatActivity() {
@@ -45,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
         // 당겨서 새로고침
         swipe_refresh_layout.setOnRefreshListener {
-            TotalInfoTask().execute()
+            jobGetTotalInfo().start()
 
             swipe_refresh_layout.isRefreshing = false
         }
@@ -53,7 +58,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        TotalInfoTask().execute()
+        jobGetTotalInfo().start()
 
         val weatherList = loadDbData()
         if(weatherList != null){
@@ -68,10 +73,10 @@ class MainActivity : AppCompatActivity() {
         mRealm?.close()
     }
 
-    fun readData(numOfRows:Int, pageNo:Int) : JSONObject {
-        var url = URL(
+    private fun readData() : JSONObject {
+        val url = URL(
             "http://apis.data.go.kr/1360000/VilageFcstMsgService/getWthrSituation?serviceKey=" +
-                    "${BuildConfig.API_KEY}&numOfRows=${numOfRows}&pageNo=${pageNo}&stnId=108&dataType=JSON"
+                    "${BuildConfig.API_KEY}&numOfRows=10&pageNo=1&stnId=108&dataType=JSON"
         )
 
         val connection = url.openConnection()
@@ -80,43 +85,45 @@ class MainActivity : AppCompatActivity() {
         return JSONObject(data)
     }
 
-    @SuppressLint("StaticFieldLeak")
-    inner class TotalInfoTask : AsyncTask<Void, JSONArray, String>() {
+    // 전국 날씨정보 불러오기
+    private fun jobGetTotalInfo() = CoroutineScope(Dispatchers.Main).launch {
 
-        val asyncDialog : ProgressDialog = ProgressDialog(this@MainActivity)
+        val asyncDialog = ProgressDialog(this@MainActivity)
+        asyncDialog.setProgressStyle(ProgressDialog.BUTTON_POSITIVE)
+        asyncDialog.setMessage("Loading...")
+        asyncDialog.show()
 
-        override fun onPreExecute() {
-            asyncDialog.setProgressStyle(ProgressDialog.BUTTON_POSITIVE)
-            asyncDialog.setMessage("Loading...")
-            asyncDialog.show()
+        var totalWeatherInfo = ""
+        var totalWeatherDate = ""
+
+        withContext(Dispatchers.IO){
+            try {
+
+                val jsonObject = readData()
+
+                val items = jsonObject
+                    .getJSONObject("response")
+                    .getJSONObject("body")
+                    .getJSONObject("items")
+
+                val itemArray = items.getJSONArray("item")
+               //  Log.d("===itemArray" , itemArray.toString())
+
+                val item = itemArray.getJSONObject(0)
+               //  Log.d("===item" , item.toString())
+
+                totalWeatherInfo = item.getString("wfSv1")
+                totalWeatherDate = item.getString("tmFc")
+
+            }catch (e: Exception){
+                e.printStackTrace()
+            }
         }
 
-        override fun doInBackground(vararg params: Void?): String {
+        result_notification.text = totalWeatherInfo
+        result_notification_date.text = totalWeatherDate
 
-            val jsonObject = readData(10, 1)
-
-            val items = jsonObject
-                .getJSONObject("response")
-                .getJSONObject("body")
-                .getJSONObject("items")
-
-            val itemArray = items.getJSONArray("item")
-           // Log.d("===itemArray" , itemArray.toString())
-
-            val item = itemArray.getJSONObject(0)
-           // Log.d("===itemArray" , item.toString())
-
-            result_notification.text = item.getString("wfSv1")
-            result_notification_date.text = item.getString("tmFc")
-
-            return "complete"
-        }
-
-        override fun onPostExecute(result: String?) {
-
-            // ProgressDialog 종료
-            asyncDialog.dismiss()
-        }
+        asyncDialog.dismiss()
     }
 
     private fun loadDbData() : RealmResults<LocationRealmObject>?{
