@@ -4,15 +4,12 @@ import android.app.ProgressDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.odom.briefweatherinfo.adapter.WeatherRvAdapter
 import io.realm.Realm
 import org.json.JSONObject
 import java.net.URL
 import com.odom.briefweatherinfo.db.LocationRealmObject
-
-
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
@@ -122,12 +119,11 @@ class MainActivity : AppCompatActivity() {
     private fun loadDbData() : RealmResults<LocationRealmObject>?{
         val realmResults: RealmResults<LocationRealmObject>? = mRealm?.where(LocationRealmObject::class.java)?.findAll()
 
-        if (realmResults != null) {
-            for (realmObject in realmResults) {
-                Log.d("===realm data", realmObject.name + "// "+  realmObject.lat)
-
-            }
-        }
+//        if (realmResults != null) {
+//            for (realmObject in realmResults) {
+//                Log.d("===realm data", realmObject.name + "// "+  realmObject.lat)
+//            }
+//        }
 
         return realmResults
     }
