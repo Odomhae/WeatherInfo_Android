@@ -1,17 +1,13 @@
 package com.odom.briefweatherinfo
 
-import android.annotation.SuppressLint
 import android.app.ProgressDialog
 import android.content.Intent
-import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.odom.briefweatherinfo.adapter.WeatherRvAdapter
 import io.realm.Realm
-import org.json.JSONArray
 import org.json.JSONObject
 import java.net.URL
 import com.odom.briefweatherinfo.db.LocationRealmObject
@@ -26,9 +22,6 @@ import kotlinx.coroutines.withContext
 
 
 class MainActivity : AppCompatActivity() {
-
-    var noti_text : String ? = null
-    var noti_date_text  : String ? = null
 
     var mRealm : Realm? = null
 
