@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">BriefWeatherInfo</string>
+    <string name="unit_celsius">°C</string>
+    <string name="unit_fahrenheit">°F</string>
+    <string name="search_location">위치 검색</string>
+
+    <string-array name="tempUnitCategory">
+        <item>@string/unit_celsius</item>
+        <item>@string/unit_fahrenheit</item>
+    </string-array>
+    
+    
+</resources>

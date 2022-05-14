@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ListPreference
+        app:key="temp_unit"
+        app:iconSpaceReserved="false"
+        app:title="단위"
+        app:summary="기온 단위"
+        android:entries="@array/tempUnitCategory"
+        android:entryValues="@array/tempUnitCategory"/>
+
+    <SwitchPreferenceCompat
+        app:key="push_onoff"
+        app:iconSpaceReserved="false"
+        app:title="알림 설정"
+        android:summaryOn="켜짐"
+        android:summaryOff="꺼짐"/>
+
+    <ListPreference
+        app:key="push_interval"
+        app:iconSpaceReserved="false"
+        app:title="알림 주기"
+        app:summary="앱 버전 확인" />
+
+    <Preference
+        app:key="feedback"
+        app:iconSpaceReserved="false"
+        app:title="Send feedback"
+        app:summary="앱 리뷰 남기기">
+
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="http://www.google.com" />
+
+    </Preference>
+
+    <Preference
+        app:key="version"
+        app:iconSpaceReserved="false"
+        app:title="앱 정보 확인"
+        app:summary="최신버전입니다" />
+
+</PreferenceScreen>
