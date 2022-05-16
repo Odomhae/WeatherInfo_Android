@@ -4,6 +4,7 @@ import android.app.ProgressDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.odom.briefweatherinfo.adapter.WeatherRvAdapter
 import io.realm.Realm
@@ -16,11 +17,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.odom.briefweatherinfo.model.CurrentWeatherResult
+import com.odom.briefweatherinfo.util.CurrentWeatherClient
+import retrofit2.Call
+import retrofit2.Response
 
 
 class MainActivity : AppCompatActivity() {
 
     var mRealm : Realm? = null
+    var retrofitInterface= CurrentWeatherClient().api
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 
         // 당겨서 새로고침
         swipe_refresh_layout.setOnRefreshListener {
-            jobGetTotalInfo().start()
+            onResume()
 
             swipe_refresh_layout.isRefreshing = false
         }
@@ -54,6 +60,11 @@ class MainActivity : AppCompatActivity() {
         if(weatherList != null){
             rv_weather.adapter = WeatherRvAdapter(weatherList)
             rv_weather.layoutManager = LinearLayoutManager(this)
+
+            for (realmObject in weatherList) {
+                Log.d("===realm data", realmObject.name + "// "+  realmObject.lat + "// "+  realmObject.lng)
+                getLocationWeather(realmObject.lat, realmObject.lng)
+            }
         }
 
     }
@@ -61,6 +72,30 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         mRealm?.close()
+    }
+
+    private fun getLocationWeather(lat: Double, lng: Double){
+
+        retrofitInterface.getCurrentWeather(lat, lng, "metric", BuildConfig.API_KEY2)
+            .enqueue(object : retrofit2.Callback<CurrentWeatherResult> {
+
+                override fun onResponse(call: Call<CurrentWeatherResult>, response: Response<CurrentWeatherResult>) {
+                    if(response.isSuccessful){
+                        Log.d("===onResponse",  "success")
+
+                        val a = response.body()
+                        val b = a?.clouds?.all
+                        val c = a?.main?.temp
+
+                        Log.d("===yy", b.toString() + "  / " + c )
+                    }
+                }
+
+                override fun onFailure(call: Call<CurrentWeatherResult>, t: Throwable) {
+                    Log.d("===onFailure",  "failure")
+                }
+
+            })
     }
 
     private fun readData() : JSONObject {
