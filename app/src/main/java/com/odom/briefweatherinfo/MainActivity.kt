@@ -26,7 +26,7 @@ import retrofit2.Response
 class MainActivity : AppCompatActivity() {
 
     var mRealm : Realm? = null
-    var retrofitInterface= CurrentWeatherClient().api
+    var retrofitInterface= CurrentWeatherClient().mGetApi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

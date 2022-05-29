@@ -7,10 +7,7 @@ import retrofit2.Retrofit
 class CurrentWeatherClient {
 
     private val baseUrl = "https://api.openweathermap.org"
-    private val mGetApi: CurrentWeatherApi
-    val api: CurrentWeatherApi
-        get() = mGetApi
-
+    val mGetApi: CurrentWeatherApi
 
     init {
         val mRetrofit: Retrofit = Retrofit.Builder()
