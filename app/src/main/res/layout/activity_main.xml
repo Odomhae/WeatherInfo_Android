@@ -110,7 +110,7 @@
                     android:id="@+id/rv_weather"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    tools:listitem="@layout/item_weather" />
+                    tools:listitem="@layout/rv_item_weather" />
 
             </LinearLayout>
 

@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.odom.briefweatherinfo.adapter.WeatherRvAdapter
 import io.realm.Realm
@@ -21,12 +22,16 @@ import com.odom.briefweatherinfo.model.CurrentWeatherResult
 import com.odom.briefweatherinfo.util.CurrentWeatherClient
 import retrofit2.Call
 import retrofit2.Response
+import androidx.recyclerview.widget.RecyclerView
 
 
 class MainActivity : AppCompatActivity() {
 
     var mRealm : Realm? = null
     var retrofitInterface= CurrentWeatherClient().mGetApi
+
+    private lateinit var rvAdapter: WeatherRvAdapter
+    private lateinit var weatherList : ArrayList<LocationRealmObject>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +52,6 @@ class MainActivity : AppCompatActivity() {
         // 당겨서 새로고침
         swipe_refresh_layout.setOnRefreshListener {
             onResume()
-
             swipe_refresh_layout.isRefreshing = false
         }
     }
@@ -56,17 +60,46 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         jobGetTotalInfo().start()
 
-        val weatherList = loadDbData()
-        if(weatherList != null){
-            rv_weather.adapter = WeatherRvAdapter(weatherList)
-            rv_weather.layoutManager = LinearLayoutManager(this)
+        weatherList = loadDbData()
+        if(weatherList.isNotEmpty()){
+            rvAdapter = WeatherRvAdapter(weatherList, mRealm)
+            rv_weather.apply {
+                adapter = WeatherRvAdapter(weatherList, mRealm)
+                layoutManager = LinearLayoutManager(context)
+            }
 
             for (realmObject in weatherList) {
-                Log.d("===realm data", realmObject.name + "// "+  realmObject.lat + "// "+  realmObject.lng)
+                // Log.d("===realm data", realmObject.name + "// "+  realmObject.lat + "// "+  realmObject.lng)
                 getLocationWeather(realmObject.lat, realmObject.lng)
             }
         }
 
+        setItemTouchHelper()
+    }
+
+    fun setItemTouchHelper(){
+
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN){
+
+            override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+                val dragFlags: Int  = ItemTouchHelper.UP or ItemTouchHelper.DOWN
+                val swipeFlags :Int = ItemTouchHelper.START or ItemTouchHelper.END
+                return ItemTouchHelper.Callback.makeMovementFlags(dragFlags, swipeFlags)
+            }
+
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+                //위치 swap
+                return true
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                (rv_weather.adapter as WeatherRvAdapter).deleteList(viewHolder.adapterPosition)
+            }
+
+        }).apply {
+            attachToRecyclerView(rv_weather)
+        }
     }
 
     override fun onDestroy() {
@@ -83,11 +116,17 @@ class MainActivity : AppCompatActivity() {
                     if(response.isSuccessful){
                         Log.d("===onResponse",  "success")
 
-                        val a = response.body()
-                        val b = a?.clouds?.all
-                        val c = a?.main?.temp
+                        val body = response.body()
+                        val b = body?.clouds?.all
+                        val currentTemp = body?.main?.temp
 
-                        Log.d("===yy", b.toString() + "  / " + c )
+                        Log.d("===yy", b.toString() + "  / " + currentTemp)
+
+                        //update temp
+                        mRealm?.beginTransaction()
+                        val info = mRealm?.where(LocationRealmObject::class.java)?.equalTo("lat" , lat)?.findFirst()
+                        info?.currentTemp = currentTemp!!
+                        mRealm?.commitTransaction()
                     }
                 }
 
@@ -151,15 +190,12 @@ class MainActivity : AppCompatActivity() {
         asyncDialog.dismiss()
     }
 
-    private fun loadDbData() : RealmResults<LocationRealmObject>?{
+    // convert RealmResults to ArrayList
+    private fun loadDbData() : ArrayList<LocationRealmObject>{
         val realmResults: RealmResults<LocationRealmObject>? = mRealm?.where(LocationRealmObject::class.java)?.findAll()
+        val myList = ArrayList<LocationRealmObject>()
+        myList.addAll(mRealm!!.copyFromRealm(realmResults))
 
-//        if (realmResults != null) {
-//            for (realmObject in realmResults) {
-//                Log.d("===realm data", realmObject.name + "// "+  realmObject.lat)
-//            }
-//        }
-
-        return realmResults
+        return myList
     }
 }
