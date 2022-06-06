@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
             ItemTouchHelper.UP or ItemTouchHelper.DOWN){
 
             override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
-                val dragFlags: Int  = ItemTouchHelper.UP or ItemTouchHelper.DOWN
+                val dragFlags: Int  = ItemTouchHelper.START or ItemTouchHelper.END // drag disable
                 val swipeFlags :Int = ItemTouchHelper.START or ItemTouchHelper.END
                 return ItemTouchHelper.Callback.makeMovementFlags(dragFlags, swipeFlags)
             }

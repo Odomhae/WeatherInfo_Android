@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.odom.briefweatherinfo.R
 import com.odom.briefweatherinfo.db.LocationRealmObject
 import io.realm.Realm
+import kotlin.collections.ArrayList
 
 class WeatherRvAdapter(private var weatherInfo : ArrayList<LocationRealmObject>, var mRealm : Realm?):
     RecyclerView.Adapter<WeatherRvAdapter.WeatherViewHolder>() {
