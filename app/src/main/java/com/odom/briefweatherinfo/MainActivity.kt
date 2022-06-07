@@ -5,6 +5,10 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.ImageView
+import androidx.databinding.BindingAdapter
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.odom.briefweatherinfo.adapter.WeatherRvAdapter
@@ -23,6 +27,8 @@ import com.odom.briefweatherinfo.util.CurrentWeatherClient
 import retrofit2.Call
 import retrofit2.Response
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.odom.briefweatherinfo.databinding.ActivityMainBinding
 
 
 class MainActivity : AppCompatActivity() {
@@ -32,28 +38,21 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var rvAdapter: WeatherRvAdapter
     private lateinit var weatherList : ArrayList<LocationRealmObject>
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        ib_setting!!.setOnClickListener {
-            val intent = Intent(this, SettingActivity::class.java)
-            startActivity(intent)
-        }
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.activity = this
 
-        ib_add_location!!.setOnClickListener {
-            val intent = Intent(this, AddLocationActivity::class.java)
-            startActivity(intent)
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            onResume()
+            binding.swipeRefreshLayout.isRefreshing = false
+
         }
 
         mRealm = Realm.getDefaultInstance()
-
-        // 당겨서 새로고침
-        swipe_refresh_layout.setOnRefreshListener {
-            onResume()
-            swipe_refresh_layout.isRefreshing = false
-        }
     }
 
     override fun onResume() {
@@ -198,4 +197,15 @@ class MainActivity : AppCompatActivity() {
 
         return myList
     }
+
+    fun settingBtnListener(view : View){
+        val intent = Intent(this, SettingActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun addBtnListener(view : View){
+        val intent = Intent(this, AddLocationActivity::class.java)
+        startActivity(intent)
+    }
+
 }
