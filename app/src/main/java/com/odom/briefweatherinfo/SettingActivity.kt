@@ -21,8 +21,8 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.preference, rootKey)
 
         val unitPreference : ListPreference? = findPreference("temp_unit")
-        val powerPreference : SwitchPreferenceCompat? = findPreference("push_onoff")
-        val intervalPreference : ListPreference? = findPreference("push_interval")
+      //  val powerPreference : SwitchPreferenceCompat? = findPreference("push_onoff")
+     //   val intervalPreference : ListPreference? = findPreference("push_interval")
 
         unitPreference?.setOnPreferenceChangeListener { _, newValue ->
 
@@ -32,6 +32,8 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             true
         }
 
+        // TODO: 2022-09-05
+        /*
         powerPreference?.setOnPreferenceClickListener {
             when{
                 powerPreference.isChecked -> {
@@ -47,6 +49,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         }
 
         intervalPreference?.isEnabled = (powerPreference?.isChecked == true)
+        */
 //        intervalPreference?.setOnPreferenceChangeListener { _, newValue ->
 //
 //            val index = intervalPreference.findIndexOfValue(newValue.toString())

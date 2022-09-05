@@ -1,8 +1,13 @@
 <resources>
     <string name="app_name">BriefWeatherInfo</string>
+    <string name="tempUnit">온도 단위</string>
     <string name="unit_celsius">°C</string>
     <string name="unit_fahrenheit">°F</string>
     <string name="search_location">위치 검색</string>
+    <string name="total_forecast">전국 날씨</string>
+    <string name="review_app">앱 리뷰 남기기</string>
+    <string name="version_app">앱 버전</string>
+    <string name="latest_version">최신버전입니다</string>
 
     <string-array name="tempUnitCategory">
         <item>@string/unit_celsius</item>
