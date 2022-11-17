@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "152279631005",
+    "project_id": "weatherinfo-3ee43",
+    "storage_bucket": "weatherinfo-3ee43.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:152279631005:android:1a7607ecea1f03f94c8074",
+        "android_client_info": {
+          "package_name": "com.odom.briefweatherinfo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "152279631005-ku6h7l691md5c0dk15e7gl2t6uh9m72s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiRsIZgIZOEOqCb6bV9YpEoGxtJkw3Mo0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "152279631005-ku6h7l691md5c0dk15e7gl2t6uh9m72s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
