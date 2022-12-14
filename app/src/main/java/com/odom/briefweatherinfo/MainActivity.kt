@@ -27,7 +27,6 @@ import com.odom.briefweatherinfo.util.CurrentWeatherClient
 import retrofit2.Call
 import retrofit2.Response
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.odom.briefweatherinfo.databinding.ActivityMainBinding
 import java.util.*
 
@@ -40,6 +39,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var rvAdapter: WeatherRvAdapter
     private lateinit var weatherList : ArrayList<LocationRealmObject>
     private lateinit var binding: ActivityMainBinding
+    
+    var isCollapsed = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -195,6 +196,15 @@ class MainActivity : AppCompatActivity() {
 
         result_notification.text = totalWeatherInfo
         result_notification_date.text = totalWeatherDate
+
+        result_notification.setOnClickListener {
+            if (isCollapsed) {
+                result_notification.maxLines = Int.MAX_VALUE
+            } else {
+                result_notification.maxLines = 4
+            }
+            isCollapsed = !isCollapsed
+        }
 
         asyncDialog.dismiss()
     }
