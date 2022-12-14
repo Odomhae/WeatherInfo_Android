@@ -29,6 +29,7 @@ import retrofit2.Response
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.odom.briefweatherinfo.databinding.ActivityMainBinding
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -176,7 +177,16 @@ class MainActivity : AppCompatActivity() {
                //  Log.d("===item" , item.toString())
 
                 totalWeatherInfo = item.getString("wfSv1")
-                totalWeatherDate = item.getString("tmFc")
+                val rawDate = item.getString("tmFc")
+
+                // 기준날짜
+                val year = rawDate.substring(2 until 4)
+                val month = rawDate.substring(4 until 6)
+                val day = rawDate.substring(6 until 8)
+                val time = rawDate.substring(8 until 10)
+                // Log.d("===time", "$year/ $month/ $day/ $time")
+
+                totalWeatherDate = "$month/$day $time:00 기준"
 
             }catch (e: Exception){
                 e.printStackTrace()
