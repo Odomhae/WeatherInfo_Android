@@ -84,13 +84,14 @@ class MainActivity : AppCompatActivity() {
             ItemTouchHelper.UP or ItemTouchHelper.DOWN){
 
             override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
-                val dragFlags: Int  = ItemTouchHelper.START or ItemTouchHelper.END // drag disable
+                val dragFlags: Int  = ItemTouchHelper.UP or ItemTouchHelper.DOWN // drag disable
                 val swipeFlags :Int = ItemTouchHelper.START or ItemTouchHelper.END
                 return ItemTouchHelper.Callback.makeMovementFlags(dragFlags, swipeFlags)
             }
 
             override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
                 //위치 swap
+                (rv_weather.adapter as WeatherRvAdapter).movelist(viewHolder.adapterPosition, target.adapterPosition)
                 return true
             }
 
