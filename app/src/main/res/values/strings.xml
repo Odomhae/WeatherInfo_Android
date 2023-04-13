@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BriefWeatherInfo</string>
+    <string name="app_name">한국 일기예보- 세계날씨</string>
     <string name="tempUnit">온도 단위</string>
     <string name="unit_celsius">°C</string>
     <string name="unit_fahrenheit">°F</string>

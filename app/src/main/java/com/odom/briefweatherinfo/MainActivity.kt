@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -43,6 +44,9 @@ class MainActivity : AppCompatActivity() {
     
     var isCollapsed = true
 
+    // 뒤로가기 2번 종료
+    var backPressTime = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -63,6 +67,14 @@ class MainActivity : AppCompatActivity() {
         jobGetTotalInfo().start()
 
         weatherList = loadDbData()
+
+        for (realmObject in weatherList) {
+            // Log.d("===realm data", realmObject.name + "// "+  realmObject.lat + "// "+  realmObject.lng)
+            getLocationWeather(realmObject.lat, realmObject.lng)
+        }
+
+        weatherList = loadDbData()
+
         if(weatherList.isNotEmpty()){
             rvAdapter = WeatherRvAdapter(weatherList, mRealm)
             rv_weather.apply {
@@ -70,10 +82,6 @@ class MainActivity : AppCompatActivity() {
                 layoutManager = LinearLayoutManager(context)
             }
 
-            for (realmObject in weatherList) {
-                // Log.d("===realm data", realmObject.name + "// "+  realmObject.lat + "// "+  realmObject.lng)
-                getLocationWeather(realmObject.lat, realmObject.lng)
-            }
         }
 
         setItemTouchHelper()
@@ -87,12 +95,12 @@ class MainActivity : AppCompatActivity() {
             override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
                 val dragFlags: Int  = ItemTouchHelper.UP or ItemTouchHelper.DOWN // drag disable
                 val swipeFlags :Int = ItemTouchHelper.START or ItemTouchHelper.END
-                return ItemTouchHelper.Callback.makeMovementFlags(dragFlags, swipeFlags)
+                return ItemTouchHelper.Callback.makeMovementFlags(0, swipeFlags)
             }
 
             override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
                 //위치 swap
-                (rv_weather.adapter as WeatherRvAdapter).movelist(viewHolder.adapterPosition, target.adapterPosition)
+              //  (rv_weather.adapter as WeatherRvAdapter).movelist(viewHolder.adapterPosition, target.adapterPosition)
                 return true
             }
 
@@ -100,24 +108,17 @@ class MainActivity : AppCompatActivity() {
                 (rv_weather.adapter as WeatherRvAdapter).deleteList(viewHolder.adapterPosition)
             }
 
-            override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
-                super.onSelectedChanged(viewHolder, actionState)
-
-                if (actionState == ACTION_STATE_DRAG) {
-                    viewHolder?.itemView?.alpha = 0.5f
-                }
-            }
-
-            override fun clearView(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder
-            ) {
-                super.clearView(recyclerView, viewHolder)
-                viewHolder.itemView.alpha = 1.0f
-            }
-
         }).apply {
             attachToRecyclerView(rv_weather)
+        }
+    }
+
+    override fun onBackPressed() {
+        if (System.currentTimeMillis().toInt() - backPressTime > 2000){
+            backPressTime = System.currentTimeMillis().toInt()
+            Toast.makeText(this, "한번 더 누르면 앱이 종료됩니다." , Toast.LENGTH_SHORT).show()
+        } else {
+            finish()
         }
     }
 
@@ -128,7 +129,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun getLocationWeather(lat: Double, lng: Double){
 
-        retrofitInterface.getCurrentWeather(lat, lng, "metric", BuildConfig.API_KEY2)
+        retrofitInterface.getCurrentWeather(lat, lng, "metric", BuildConfig.API_KEY2, "kr")
             .enqueue(object : retrofit2.Callback<CurrentWeatherResult> {
 
                 override fun onResponse(call: Call<CurrentWeatherResult>, response: Response<CurrentWeatherResult>) {
@@ -136,15 +137,22 @@ class MainActivity : AppCompatActivity() {
                         Log.d("===onResponse",  "success")
 
                         val body = response.body()
-                        val b = body?.clouds?.all
+                        val weather = body?.weather?.get(0)
                         val currentTemp = body?.main?.temp
+                        val weatherMain = weather?.main
 
-                        Log.d("===yy", b.toString() + "  / " + currentTemp)
+                        Log.d("===yy", weatherMain + "  / " +weather?.description +" /" + weather?.id + "  / " + currentTemp)
+                        // D/===yy: Clear  / 맑음 /800  / 27.95
+                        // D/===yy: Sand  / 모래 /751  / 10.38
+
+                        // https://openweathermap.org/weather-conditions
 
                         //update temp
                         mRealm?.beginTransaction()
                         val info = mRealm?.where(LocationRealmObject::class.java)?.equalTo("lat" , lat)?.findFirst()
                         info?.currentTemp = currentTemp!!
+                        info?.main = weatherMain
+
                         mRealm?.commitTransaction()
                     }
                 }

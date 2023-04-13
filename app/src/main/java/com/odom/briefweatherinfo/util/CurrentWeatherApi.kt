@@ -14,6 +14,7 @@ interface CurrentWeatherApi {
         @Query("lon") lon: Double?,
         @Query("units") units: String?,
         @Query("appid") appId: String?,
+        @Query("lang") land: String?
 
     ): Call<CurrentWeatherResult>
 

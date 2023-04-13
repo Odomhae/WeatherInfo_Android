@@ -49,38 +49,4 @@ class WeatherRvAdapter(private var weatherInfo : ArrayList<LocationRealmObject>,
         }
 
     }
-
-    fun movelist(fromPosisition : Int, toPosition : Int) : Boolean{
-
-        Collections.swap(weatherInfo, fromPosisition, toPosition)
-        notifyItemMoved(fromPosisition, toPosition)
-
-        //realm에서도 변경
-        val fromDataName = weatherInfo[fromPosisition].name
-        val toDataName = weatherInfo[toPosition].name
-
-        mRealm?.executeTransaction {
-            val fromData = it.where(LocationRealmObject::class.java)
-                .equalTo("name", fromDataName)
-                .findFirst()
-
-            val toData = it.where(LocationRealmObject::class.java)
-                .equalTo("name", toDataName)
-                .findFirst()
-
-            if (fromData != null && toData != null) {
-                fromData.currentTemp = weatherInfo[toPosition].currentTemp
-                fromData.lat = weatherInfo[toPosition].lat
-                fromData.lng = weatherInfo[toPosition].lng
-                fromData.name = weatherInfo[toPosition].name
-
-                toData.currentTemp = weatherInfo[fromPosisition].currentTemp
-                toData.lat = weatherInfo[fromPosisition].lat
-                toData.lng = weatherInfo[fromPosisition].lng
-                toData.name = weatherInfo[fromPosisition].name
-            }
-        }
-
-        return true
-    }
 }
