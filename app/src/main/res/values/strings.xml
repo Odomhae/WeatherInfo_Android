@@ -2,6 +2,7 @@
     <string name="app_name">한국 일기예보- 세계날씨</string>
     <string name="tempUnit">온도 단위</string>
     <string name="unit_celsius">°C</string>
+    <string name="value_celsius">%d°C</string>
     <string name="unit_fahrenheit">°F</string>
     <string name="search_location">위치 검색</string>
     <string name="total_forecast">전국 날씨</string>
