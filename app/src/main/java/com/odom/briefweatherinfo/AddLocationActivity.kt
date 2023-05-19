@@ -61,7 +61,7 @@ class AddLocationActivity : AppCompatActivity() {
                 Log.d("===검색성공", "$city, $lat, $lng")
                 // 중복확인 후 db에 넣고
                 saveNewCity(city, lat, lng)
-                Toast.makeText(this@AddLocationActivity, "$city 추가 완료 : $lat, $lng" , Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@AddLocationActivity, "$city 추가 완료" , Toast.LENGTH_SHORT).show()
 
                 // 종료
                 finish()
