@@ -34,7 +34,7 @@
 
         <intent
             android:action="android.intent.action.VIEW"
-            android:data="http://www.google.com" />
+            android:data="@string/app_url" />
 
     </Preference>
 

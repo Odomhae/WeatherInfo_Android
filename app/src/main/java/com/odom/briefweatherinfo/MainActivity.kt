@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -47,6 +48,18 @@ class MainActivity : AppCompatActivity() {
     // 뒤로가기 2번 종료
     var backPressTime = 0
 
+    private val callback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            // 뒤로가기 클릭 시 실행시킬 코드 입력
+            if (System.currentTimeMillis().toInt() - backPressTime > 2000){
+                backPressTime = System.currentTimeMillis().toInt()
+                Toast.makeText(this@MainActivity, "한번 더 누르면 앱이 종료됩니다." , Toast.LENGTH_SHORT).show()
+            } else {
+                finish()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -60,6 +73,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         mRealm = Realm.getDefaultInstance()
+        this.onBackPressedDispatcher.addCallback(this, callback)
     }
 
     override fun onResume() {

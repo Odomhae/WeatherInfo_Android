@@ -10,6 +10,8 @@
     <string name="version_app">앱 버전</string>
     <string name="latest_version">최신버전입니다</string>
 
+    <string name="app_url">https://play.google.com/store/apps/details?id=com.odom.briefweatherinfo&amp;hl=en-KR</string>
+
     <string-array name="tempUnitCategory">
         <item>@string/unit_celsius</item>
         <item>@string/unit_fahrenheit</item>
