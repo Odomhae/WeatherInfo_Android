@@ -10,13 +10,13 @@ import kotlin.collections.ArrayList
 
 object GeoUtil {
 
-    fun getLocationFromName(context: Context?, city: String, listener: GeoUtilListener) {
+    fun getLocationFromName(context: Context, city: String, listener: GeoUtilListener) {
 
         val geocoder = Geocoder(context, Locale.getDefault())
         val addresses: List<Address>
 
         try {
-            addresses = geocoder.getFromLocationName(city, 1)
+            addresses = geocoder.getFromLocationName(city, 1) as List<Address>
             if(addresses.size > 0){
                 val lat: Double = addresses[0].latitude
                 val lng: Double = addresses[0].longitude
