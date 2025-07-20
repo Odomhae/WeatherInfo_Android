@@ -20,7 +20,6 @@ import org.json.JSONObject
 import java.net.URL
 import com.odom.briefweatherinfo.db.LocationRealmObject
 import io.realm.RealmResults
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         override fun handleOnBackPressed() {
             // 뒤로가기 클릭 시 실행시킬 코드 입력
             if (System.currentTimeMillis().toInt() - backPressTime > 2000){
-                backPressTime = System.currentTimeMillis().toInt()
+                 backPressTime = System.currentTimeMillis().toInt()
                 Toast.makeText(this@MainActivity, "한번 더 누르면 앱이 종료됩니다." , Toast.LENGTH_SHORT).show()
             } else {
                 finish()
@@ -91,7 +90,7 @@ class MainActivity : AppCompatActivity() {
 
         if(weatherList.isNotEmpty()){
             rvAdapter = WeatherRvAdapter(weatherList, mRealm)
-            rv_weather.apply {
+            binding.rvWeather.apply {
                 adapter = WeatherRvAdapter(weatherList, mRealm)
                 layoutManager = LinearLayoutManager(context)
             }
@@ -119,11 +118,11 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                (rv_weather.adapter as WeatherRvAdapter).deleteList(viewHolder.adapterPosition)
+                (binding.rvWeather.adapter as WeatherRvAdapter).deleteList(viewHolder.adapterPosition)
             }
 
         }).apply {
-            attachToRecyclerView(rv_weather)
+            attachToRecyclerView(binding.rvWeather)
         }
     }
 
@@ -234,14 +233,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        result_notification.text = totalWeatherInfo
-        result_notification_date.text = totalWeatherDate
+        binding.resultNotification.text = totalWeatherInfo
+        binding.resultNotificationDate.text = totalWeatherDate
 
-        result_notification.setOnClickListener {
+        binding.resultNotification.setOnClickListener {
             if (isCollapsed) {
-                result_notification.maxLines = Int.MAX_VALUE
+                binding.resultNotification.maxLines = Int.MAX_VALUE
             } else {
-                result_notification.maxLines = 4
+                binding.resultNotification.maxLines = 4
             }
             isCollapsed = !isCollapsed
         }

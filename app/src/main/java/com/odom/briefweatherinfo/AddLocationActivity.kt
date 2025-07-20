@@ -15,7 +15,6 @@ import com.odom.briefweatherinfo.util.GeoUtil.getLocationFromName
 import com.odom.briefweatherinfo.db.LocationRealmObject
 
 import io.realm.Realm
-import kotlinx.android.synthetic.main.activity_add_location.*
 
 
 class AddLocationActivity : AppCompatActivity() {
@@ -30,7 +29,7 @@ class AddLocationActivity : AppCompatActivity() {
 
         binding.tvAutoComplete.setOnEditorActionListener { _, actionId, _ ->
 
-            val city = tv_autoComplete?.text.toString()
+            val city = binding.tvAutoComplete?.text.toString()
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 getLocation(city)
             }
